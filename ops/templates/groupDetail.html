@@ -1,0 +1,53 @@
+{% extends 'index.html' %}
+{% block content-center %}
+<h3 class="page-header">{{ group_obj.name}} | {{ip_list|length}}台</h3>
+===
+<div class="row">
+	<table id="host_list" class="table table-hover">
+    	<th>Hostname</th> 
+        <th>IP</th>
+        <th>Status</th>
+        <th>Duration</th>
+        <th>Retry</th>
+        <th>Last Check</th>
+        <th>Status Info</th>
+        {% for host in ip_list %}
+        	<tr>
+            	<td> <a href="/host_detail/{{host.id}}">{{ host.display_name }}</a></td>
+                <td> {{ host.ip }}</td>
+                <td> OK </td>
+                <td> 10H </td>
+				<td> 5/2 </td>	
+                <td> 2015-09-14 14:36:20</td>	
+                <td> ok.....</td>
+             <tr>
+        {% endfor %}
+     </table>
+</div>
+
+<script type="text/jscript">
+	var autoRefresh = setInterval(function(){
+			$.getJSON('/host_list/',{'group_id':"{{ group_obj.id}}"},function(HostList){
+				console.log(HostList);
+				$("#host_list").find('tr:gt(0)').remove();  //删除除标题外的数据（清空重复数据）
+				$.each(HostList,function(key,value){
+						var c_time = new Date()
+						hostname = "<a href='/host_detail/" + key + "'>" + value[0] + "</a>";
+						
+						if (key == 1){
+							status_col = "<td class='danger'> DOWN </td>";
+						}
+						else{
+							status_col = "<td class='success'> OK </td>";
+						}
+						row_content = "<tr><td>" + hostname + "</td><td>" + value[1] + 
+						"</td>" + status_col + "<td>" + "10Hours" + "</td><td>" +
+						"5/2" + "</td><td>" + c_time.toLocaleString() + "</td><td>" + 
+						"Status ok..." + "</td></tr>";
+						$("#host_list").append(row_content);
+					})// end each
+				})//end get
+		},5000);// end autoRefresh
+
+</script>
+{% endblock %}

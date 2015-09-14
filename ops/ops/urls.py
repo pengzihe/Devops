@@ -16,4 +16,7 @@ urlpatterns = patterns('',
     url(r'^login_auth/$',login_auth),
     url(r'^logout/$',logout),
     url(r'^getGroupSummary/$',getGroupSummary),
+    url(r'^groupDetail/(\d+)/$',groupDetail),
+    url(r'^host_list/$',host_list),
+    url(r'^host_detail/(\d+)/$',host_detail),
 )

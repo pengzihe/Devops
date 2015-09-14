@@ -1,0 +1,25 @@
+{% extends "index.html" %}
+{% block content-center %}
+<h3 class="page-header">{{ hostObj.display_name}}信息</h3>
+
+<div>
+
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Overview</a></li>
+    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Graphs</a></li>
+    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Logs</a></li>
+    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="home">home...</div>
+    <div role="tabpanel" class="tab-pane" id="profile">...pp</div>
+    <div role="tabpanel" class="tab-pane" id="messages">...m</div>
+    <div role="tabpanel" class="tab-pane" id="settings">...s</div>
+  </div>
+
+</div>
+
+{% endblock %}

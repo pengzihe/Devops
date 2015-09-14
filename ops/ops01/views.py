@@ -45,3 +45,23 @@ def getGroupSummary(request):
 		group_dic['groupSummary'][group.id] = [group.name,len(ip_list)]	
 
 	return HttpResponse(json.dumps(group_dic))
+
+
+def groupDetail(request,group_id):
+	group_obj = Group.objects.get(id = group_id);
+	ip_list = IP.objects.filter(group__name = group_obj.name)
+	return render_to_response('groupDetail.html',{'group_obj':group_obj,'ip_list':ip_list})
+
+
+def host_list(request):
+	group_id = request.GET.get('group_id')
+	ip_list = IP.objects.filter(group__id = group_id)
+	ip_dic = {}
+	for host in ip_list:
+		ip_dic[host.id] = [host.display_name,host.ip]
+	return HttpResponse(json.dumps(ip_dic))
+
+
+def host_detail(request,host_id):
+	hostObj = IP.objects.get(id = host_id)
+	return render_to_response('host_detail.html',{'hostObj':hostObj})
