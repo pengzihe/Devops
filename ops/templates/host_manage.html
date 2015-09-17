@@ -1,0 +1,52 @@
+{% extends 'index.html' %}
+{% block sidebar %}
+<ul class="nav nav-sidebar">
+	<li class="active"><a href="#">命令执行</a></li>
+    <li><a href="#">文件分发</a></li>
+    <li><a href="#">计划任务</a></li>       
+</ul>
+
+{% endblock %}
+{% block content-center %}
+SERVER MANAGER PAGE
+<div> 
+	<form id="cmdForm">
+        <div class="col-sm-6">
+            {% for k,v in group_dic.items %}
+                <input type="checkbox" name="{{k}}" />{{k}} [{{ v|length }}]<br>
+            {% endfor %}
+            <br><br>
+       
+            <input type="text" class="form-control" placeholder="Text Input" name="cmd" />
+            <input type="button" onclick="submitCMD()" value="执行" />
+        </div>
+    </form>
+<div id="CMD_RESULT">
+</div>
+<script type="text/javascript">
+	function submitCMD(){
+		var formData = $("#cmdForm").serialize();
+		$.getJSON('/runCMD/', formData, function(results){
+				console.log(results);
+				//console.log(results.track_mark);
+				
+				var autoRefresh = setInterval(function(){
+					$.getJSON('/getCmdResult/',{'track_mark':results.track_mark},function(cmd_result){
+							
+							console.log(cmd_result.result_detail);
+							for (host_result in cmd_result.result_detail){
+								ip = cmd_result.result_detail[host_result]
+								event_log = cmd_result.result_detail[host_result]
+								result = cmd_result.result_detail[host_result]
+								//console.log(host_result)
+								c_result = ip + event_log + result
+								$("#CMD_RESULT").append(c_result)
+							}//end for 
+							
+					})// end getCmdResult
+				},1500);//end autoRefresh
+		})// end getJSon
+	}
+</script>
+</div>
+{% endblock %}

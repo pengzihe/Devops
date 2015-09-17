@@ -166,3 +166,31 @@ class operations(models.Model):
     notice_times = models.IntegerField(default=5)
     notice_interval = models.IntegerField(default=300, verbose_name='notice_interval(sec)')
 
+
+class OpsLog(models.Model):
+    start_date = models.DateTimeField(auto_now_add=True)
+    finish_date = models.DateTimeField(null=True,blank=True)
+    log_type = models.CharField(max_length=50)
+    tri_user = models.CharField(max_length=30)
+    run_user = models.CharField(max_length=30)
+    cmd = models.TextField()
+    total_task = models.IntegerField()
+    success_num = models.IntegerField()
+    failed_num = models.IntegerField()
+    track_mark = models.IntegerField(unique=True)
+    note = models.CharField(max_length=100,blank=True,null=True)
+    def __unicode__(self):
+        return self.cmd
+
+class OpsLogTemp(models.Model):
+        date = models.DateTimeField(auto_now_add=True)
+        user = models.CharField(max_length=30)
+        ip = models.IPAddressField()
+        event_type = models.CharField(max_length=50)
+        cmd = models.TextField()
+        event_log = models.TextField()
+        result = models.CharField(max_length=30,default='unknown')
+        track_mark = models.IntegerField(blank=True)
+        note = models.CharField(max_length=100,blank=True)
+        def __unicode__(self):
+            return self.ip

@@ -7,7 +7,7 @@
   <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Overview</a></li>
-    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Graphs</a></li>
+    <li role="presentation"><a href="#graph" aria-controls="profile" role="tab" data-toggle="tab">Graphs</a></li>
     <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Logs</a></li>
     <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>
   </ul>
@@ -15,7 +15,74 @@
   <!-- Tab panes -->
   <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="home">home...</div>
-    <div role="tabpanel" class="tab-pane" id="profile">...pp</div>
+    <div role="tabpanel" class="tab-pane" id="graph">
+    ssss
+		<script type="text/javascript">
+			$.getJSON('/getGraph/',{host_id: '{{hostObj.id}}'},function(returnData){
+				 console.log(returnData)
+			
+					$(function () {
+					$('#container').highcharts({
+						chart:{
+							type: 'area'
+						},
+						credits:{
+							enabled: false
+						},
+						title: {
+							text: 'Localhost Load Average',
+							x: -20 //center
+						},
+						subtitle: {
+							text: 'Source: By 运维监控',
+							x: -20
+						},
+						xAxis: {
+							categories: returnData.time
+						},
+						yAxis: {
+							title: {
+								text: 'Percent %'
+							},
+							plotLines: [{
+								value: 0,
+								width: 1,
+								color: '#808080'
+							}]
+						},
+						tooltip: {
+							valueSuffix: '%'
+						},
+						plotOptions: {
+							area: {
+								stacking: 'normal',
+								lineColor: '#666666',
+								lineWidth: 1,
+								marker: {
+									lineWidth: 1,
+									lineColor: '#666666'
+								}
+							}
+						},
+						series: [{
+							name: 'Load1',
+							data: returnData.load_1
+						}, {
+							name: 'Load5',
+							data: returnData.load_5
+						}, {
+							name: 'Load15',
+							data: returnData.load_15
+						}]
+					});
+				});
+		})// end getJSON
+        </script>
+    	<div id="container" style="height: 400px"></div>
+        <script src="/static/highcharts/js/highcharts.js"></script>
+		<script src="/static/highcharts/js/modules/exporting.js"></script>
+
+    </div>
     <div role="tabpanel" class="tab-pane" id="messages">...m</div>
     <div role="tabpanel" class="tab-pane" id="settings">...s</div>
   </div>

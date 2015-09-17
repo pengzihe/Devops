@@ -65,6 +65,13 @@ class QuickLinkAdmin(admin.ModelAdmin):
 	list_display = ('link_name','url','color')
 #class GroupAdmin(admin.ModelAdmin):
 #    form = GroupForm
+
+class LogAdmin(admin.ModelAdmin):
+    list_display = ('user','ip','event_type','cmd','event_log','result','track_mark')
+
+class OpsLogAdmin(admin.ModelAdmin):
+    list_display = ('log_type','finish_date','log_type','tri_user','run_user','cmd','total_task','success_num','failed_num','track_mark','note')
+
 admin.site.register(Idc)
 admin.site.register(IP, admin_ip.IpAdmin)
 admin.site.register(Group, admin_ip.GroupAdmin)
@@ -82,4 +89,5 @@ admin.site.register(operations)
 admin.site.register(conditions)
 admin.site.register(actions)
 admin.site.register(trunk_servers)
-
+admin.site.register(OpsLogTemp,LogAdmin)
+admin.site.register(OpsLog,OpsLogAdmin)

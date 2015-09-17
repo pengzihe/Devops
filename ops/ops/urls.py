@@ -19,4 +19,8 @@ urlpatterns = patterns('',
     url(r'^groupDetail/(\d+)/$',groupDetail),
     url(r'^host_list/$',host_list),
     url(r'^host_detail/(\d+)/$',host_detail),
+    url(r'^getGraph/$',getGraph),
+    url(r'^hostManager/$',hostManager),
+    url(r'^runCMD/$',runCMD),
+    url(r'^getCmdResult/$',getCmdResult),
 )
