@@ -8,45 +8,86 @@
 
 {% endblock %}
 {% block content-center %}
-SERVER MANAGER PAGE
+<h1 class="text-center">主机信息</h1>
 <div> 
 	<form id="cmdForm">
         <div class="col-sm-6">
-            {% for k,v in group_dic.items %}
-                <input type="checkbox" name="{{k}}" />{{k}} [{{ v|length }}]<br>
+            {% for groupName,hostList in group_dic.items %}
+               	 
+                 <input type="checkbox" name="group_name" value="{{groupName}}" onclick="checkboxOnclick(this)" />{{groupName}} [{{ hostList|length }}]<br>
+                 <div id="{{ groupName }}" style="display:none">	
+                     {% for host in hostList %}
+                     	<input class="col-sm-2" type="checkbox" name="host_name" value="{{ host }}">{{ host }}<br>
+                     {% endfor %}
+                 </div>            
             {% endfor %}
             <br><br>
        
             <input type="text" class="form-control" placeholder="Text Input" name="cmd" />
-            <input type="button" onclick="submitCMD()" value="执行" />
+            <input id="submit_button" type="button" onclick="submitCMD()" value="执行" />
         </div>
     </form>
-<div id="CMD_RESULT">
+</div>
+<div style="margin-top:180px;">
+	<div class="progress" style="visibility:hidden;">
+  		<div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: %;">
+   			 
+  		</div>
+	</div> <!--end progress-->
+    
+    <div id="CMD_RESULT">
+    </div><!--end CMD_RESULT-->
 </div>
 <script type="text/javascript">
 	function submitCMD(){
 		var formData = $("#cmdForm").serialize();
 		$.getJSON('/runCMD/', formData, function(results){
-				console.log(results);
+				//console.log(results);
 				//console.log(results.track_mark);
-				
+				$(".progress").css("visibility","visible");
+				$("#submit_button").attr("disabled",'true');
 				var autoRefresh = setInterval(function(){
 					$.getJSON('/getCmdResult/',{'track_mark':results.track_mark},function(cmd_result){
-							
-							console.log(cmd_result.result_detail);
+							console.log(cmd_result);
+							//console.log(cmd_result.result_detail);
+							$("#CMD_RESULT").html("");
 							for (host_result in cmd_result.result_detail){
-								ip = cmd_result.result_detail[host_result]
-								event_log = cmd_result.result_detail[host_result]
-								result = cmd_result.result_detail[host_result]
-								//console.log(host_result)
-								c_result = ip + event_log + result
-								$("#CMD_RESULT").append(c_result)
+								var total = cmd_result.result_summary[0]
+								var success = cmd_result.result_summary[1]
+								var failed = cmd_result.result_summary[2]
+								complete_ratio = (success + failed) / total * 100;
+								console.log(complete_ratio);
+								percent = complete_ratio + "%";
+								$(".progress-bar").css("width",percent);
+								$(".progress-bar").html(percent);
+								
+								
+								ip = cmd_result.result_detail[host_result][0];
+								event_log = cmd_result.result_detail[host_result][1];
+								result = cmd_result.result_detail[host_result][2];
+								//console.log(ip)
+								//console.log(event_log)
+								//console.log(result)
+								html_content = "<p>" + ip + "--------------->" +
+								result + "</p>" + "<pre>" + event_log + "</pre>"
+								$("#CMD_RESULT").append(html_content)
 							}//end for 
 							
 					})// end getCmdResult
 				},1500);//end autoRefresh
 		})// end getJSon
 	}
+	
+	
+	
+	function checkboxOnclick(checkbox){ 
+		var chooseGroup = checkbox.value
+		if ( checkbox.checked == true){			
+			$("#" + chooseGroup).css("display","block");			
+		}else{
+			$("#" + chooseGroup).css("display","none");
+		}
+	}
 </script>
-</div>
+
 {% endblock %}

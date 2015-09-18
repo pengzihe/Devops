@@ -82,9 +82,10 @@ def hostManager(request):
 	group_dic = {}
 	for g in Group.objects.all():
 		host_list = IP.objects.filter(group__id = g.id)
-		group_dic[g.name] = host_list
+		group_dic[g.name] = []
+		for h in host_list:
+			group_dic[g.name].append(h.display_name)
 	return render_to_response('host_manage.html',{'user':request.user,'group_dic':group_dic})
-
 
 def runCMD(request):
 	print request.GET
@@ -102,6 +103,6 @@ def getCmdResult(request):
 	result_dic['result_summary'] = [total_num,success_num,failed_num]
 	#get detail result
 	for h in OpsLogTemp.objects.filter(track_mark = track_id):
-		result_dic['result_detail'] = [h.ip,h.event_log,h.result]
+		result_dic['result_detail'].append([h.ip,h.event_log,h.result])
 
 	return HttpResponse(json.dumps(result_dic))
