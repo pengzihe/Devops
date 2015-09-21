@@ -3,8 +3,9 @@ from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render, render_to_response
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
-import time,json
+import time,json,datetime
 from ops01.models import *
+from runScripts import runCmd
 # Create your views here.
 
 
@@ -88,8 +89,33 @@ def hostManager(request):
 	return render_to_response('host_manage.html',{'user':request.user,'group_dic':group_dic})
 
 def runCMD(request):
-	print request.GET
-	return HttpResponse(json.dumps({'track_mark':1}))
+	print '-------------',request.GET.getlist('host_name')
+	hostList = request.GET.getlist('host_name')
+	latest_track_mark = OpsLog.objects.order_by('-track_mark')[0] 
+	track_mark = latest_track_mark.track_mark + 1
+	runHost = {}
+	for host in hostList:
+		getHostInfo = IP.objects.get(display_name = host)
+		runHost[host] = getHostInfo.ip 
+	executeInstance = runCmd.execute()
+	username = "root"
+        password = "www.eegoo"
+	command = request.GET.get('cmd')
+	executeInstance.run(command,runHost,username,password,track_mark)
+	
+	OpsLog.objects.create(
+	#	finish_date = datetime.datetime.now(),
+		log_type='cmd',   
+		tri_user='root',
+		run_user='root',
+		cmd=command,
+		total_task = len(hostList),
+		success_num = len(hostList),
+		failed_num = 0,
+		track_mark = track_mark)
+	print '*************',track_mark		
+	print '----------',runHost
+	return HttpResponse(json.dumps({'track_mark':track_mark}))
 
 
 def getCmdResult(request):

@@ -7,7 +7,7 @@ from ops01.models import *
 
 
 class execute:
-	def __connectHost(self,command,hostname,ip,username,password):
+	def __connectHost(self,command,hostname,ip,username,password,trackMark):
 		try:
 			
         		s = pxssh.pxssh()
@@ -15,16 +15,13 @@ class execute:
         		s.sendline(command)
         		s.prompt()
         		print "\n-------------------------------%s----------------------------------\n%s\n%s" % (hostname,s.before,time.ctime())
-			a = s.before
-			print '--------------'
-			print a
 			ops_log = OpsLogTemp(user = username, 
 				ip = ip,
 				event_type = 'cmd',
 				cmd = command, 
 				event_log = s.before,
 				result='success',
-				track_mark = 1)
+				track_mark = trackMark)
 			ops_log.save()
 			s.logout()
 			
@@ -33,11 +30,11 @@ class execute:
        			print str(e)
 
 
-	def run(self,cmd,username,password):
+	def run(self,cmd,hostInfo,username,password,trackMark):
 		#print time.ctime()
-		host = IP.objects.annotate()   #get hostname and ip address
-		for h in host:
-			t = threading.Thread(target=self.__connectHost,args=(cmd,h.display_name,h.ip,username,password))
+		#host = IP.objects.annotate()   #get hostname and ip address
+		for hostname,ip in hostInfo.items():  #hostInfo is dic
+			t = threading.Thread(target=self.__connectHost,args=(cmd,hostname,ip,username,password,trackMark))
 			t.start()
 		print "current has %d threads" % (threading.activeCount() - 1)
 
@@ -67,6 +64,8 @@ if __name__ == "__main__":
 	r = execute()
 	username = "root"
 	password = "www.eegoo"
-	r.run('date',username,password)
+	hostInfo= {'test_www':'172.16.20.51','test_member':'172.16.20.53'}
+	trackMark = 1
+	r.run('ifconfig',hostInfo,username,password,trackMark)
 	
 	#r.scp('menu.py',"select * from host where hostname='test_pay'")
