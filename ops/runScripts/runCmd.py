@@ -26,6 +26,14 @@ class execute:
 			s.logout()
 			
 		except pxssh.ExceptionPxssh,e:
+			ops_log = OpsLogTemp(user = username, 
+				ip = ip,
+				event_type = 'cmd',
+				cmd = command, 
+				event_log = s.before,
+				result='failed',
+				track_mark = trackMark)
+			ops_log.save()
        			print "pxssh failed on login."
        			print str(e)
 

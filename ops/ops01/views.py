@@ -102,7 +102,8 @@ def runCMD(request):
         password = "www.eegoo"
 	command = request.GET.get('cmd')
 	executeInstance.run(command,runHost,username,password,track_mark)
-	
+
+	successNum = len(OpsLogTemp.objects.filter(track_mark=track_mark))
 	OpsLog.objects.create(
 	#	finish_date = datetime.datetime.now(),
 		log_type='cmd',   
@@ -110,17 +111,25 @@ def runCMD(request):
 		run_user='root',
 		cmd=command,
 		total_task = len(hostList),
-		success_num = len(hostList),
+		success_num = successNum,
 		failed_num = 0,
 		track_mark = track_mark)
-	print '*************',track_mark		
-	print '----------',runHost
+	while True:
+		successNum = len(OpsLogTemp.objects.filter(track_mark=track_mark))
+		print 'num----------------',successNum
+		print 'hostlist----------------',len(hostList)
+		if successNum == len(hostList):
+			 modify_success = OpsLog.objects.get(track_mark=track_mark)
+			 modify_success.success_num = successNum
+			 modify_success.save()
+			 break
+		time.sleep(10)
 	return HttpResponse(json.dumps({'track_mark':track_mark}))
 
 
 def getCmdResult(request):
 	track_id = request.GET.get('track_mark')
-	print "----------",type(track_id)
+	#print "----------",type(track_id)
 	result_dic ={ 'result_detail':[] }
 	result_summary = OpsLog.objects.get(track_mark = track_id)
 	success_num = result_summary.success_num

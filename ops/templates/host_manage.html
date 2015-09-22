@@ -41,8 +41,9 @@
 <script type="text/javascript">
 	function submitCMD(){
 		var formData = $("#cmdForm").serialize();   //序列化
+		
 		$.getJSON('/runCMD/', formData, function(results){
-				console.log('------------' + results);
+				//console.log('------------' + results);
 				//console.log(results.track_mark);
 				$(".progress").css("visibility","visible");
 				$("#submit_button").attr("disabled",'true');
@@ -50,7 +51,7 @@
 					$.getJSON('/getCmdResult/',{'track_mark':results.track_mark},function(cmd_result){
 							//console.log(cmd_result);
 							//console.log(cmd_result.result_detail);
-							//console.log(results.track_mark);
+							console.log(results.track_mark);
 							$("#CMD_RESULT").html("");
 							for (host_result in cmd_result.result_detail){
 								var total = cmd_result.result_summary[0]
@@ -75,14 +76,16 @@
 								$("#CMD_RESULT").append(html_content)
 							}//end for 
 							
-							if (complete_ratio == 100){
+							if (complete_ratio == 100){   //判定执行结果是否完成
 									//$("#CMD_RESULT").html("");
+									clearInterval(autoRefresh);  
 									$("#submit_button").attr("disabled",false);
 								}
 							
 					})// end getCmdResult
 				},1500);//end autoRefresh
 		})// end getJSon
+		
 	}
 	
 	
