@@ -1,9 +1,9 @@
 from django.conf.urls import patterns, include, url
-
 from django.contrib import admin
 from ops01.views import *
-
 admin.autodiscover()
+
+
 
 urlpatterns = patterns('',
     # Examples:
@@ -23,4 +23,7 @@ urlpatterns = patterns('',
     url(r'^hostManager/$',hostManager),
     url(r'^runCMD/$',runCMD),
     url(r'^getCmdResult/$',getCmdResult),
+    url(r'^test/$',test),
+    #url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api/',include('ops01.urls')),
 )

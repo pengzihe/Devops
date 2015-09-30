@@ -1,3 +1,5 @@
+from django.contrib.auth.models import User, Group
+from rest_framework import viewsets,serializers
 from django.shortcuts import render
 from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render, render_to_response
@@ -141,3 +143,13 @@ def getCmdResult(request):
 		result_dic['result_detail'].append([h.ip,h.event_log,h.result])
 
 	return HttpResponse(json.dumps(result_dic))
+
+
+
+
+def test(request):
+	print request.POST
+	return HttpResponse('from 172.16.20.210')
+
+
+

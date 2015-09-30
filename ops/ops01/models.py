@@ -194,3 +194,8 @@ class OpsLogTemp(models.Model):
         note = models.CharField(max_length=100,blank=True)
         def __unicode__(self):
             return self.ip
+
+
+class Test(models.Model):
+	UserName = models.CharField(max_length=50)
+	Password = models.CharField(max_length=50)
